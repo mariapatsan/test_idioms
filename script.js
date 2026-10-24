@@ -95,7 +95,10 @@ function finishTest() {
         fetch(SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            // Убираем headers или меняем Content-Type на text/plain, чтобы избежать ошибки 405
+            headers: { 
+                'Content-Type': 'text/plain' 
+            },
             body: formData.toString()
         }).then(() => {
             document.getElementById('saving-status').innerText = "✅ Результаты успешно сохранены в таблицу!";
@@ -103,6 +106,7 @@ function finishTest() {
         }).catch(error => {
             document.getElementById('saving-status').innerText = "❌ Ошибка при сохранении.";
             document.getElementById('saving-status').style.color = "red";
+            console.error('Error:', error);
         });
     } else {
         document.getElementById('saving-status').innerText = "⚠️ Вы не указали ссылку на Google Script.";
