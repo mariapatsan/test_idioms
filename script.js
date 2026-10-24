@@ -1,7 +1,6 @@
 // ВСТАВЬТЕ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT (заканчивается на /exec)
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzR-Y1yXIENYjiOyE_3w6ScEZrDTNQdGXFLRKHxMKIClP_iTrhYK1YfVq_644pBDq-CDw/exec";
 
-// 10 вопросов на основе нашего урока
 const questions = [
     { q: "Someone who is lazy and spends a lot of time watching TV is a...", options: ["Bookworm", "Couch Potato", "Night Owl", "Big Cheese"], answer: 1 },
     { q: "Someone who wakes up early and is most active in the morning is an...", options: ["Early Bird", "Night Owl", "Cold Fish", "Smart Cookie"], answer: 0 },
@@ -17,7 +16,7 @@ const questions = [
 
 let currentQuestion = 0;
 let score = 0;
-let userAnswers = [];
+let userAnswersText = []; // Храним тексты выбранных ответов
 let selectedOption = null;
 
 function startTest() {
@@ -53,9 +52,12 @@ function selectOption(index, element) {
 
 function nextQuestion() {
     if (selectedOption === null) return;
-    userAnswers.push(selectedOption);
     
-    // Проверяем правильность ответа
+    // Сохраняем текст выбранного ответа
+    const selectedText = questions[currentQuestion].options[selectedOption];
+    userAnswersText.push(selectedText);
+    
+    // Проверяем правильность
     if (selectedOption === questions[currentQuestion].answer) {
         score++;
     }
@@ -77,38 +79,53 @@ function finishTest() {
     document.getElementById('result-text').innerText = `Вы ответили правильно на ${score} из ${questions.length} вопросов (${percentage}%).`;
 
     if (SCRIPT_URL && SCRIPT_URL !== "ВАША_ССЫЛКА_ИЗ_APPS_SCRIPT") {
-        // Отправка данных в формате form-urlencoded, как ждет Apps Script
-        const formData = new URLSearchParams();
-        formData.append('score', score);
-        formData.append('total', questions.length);
-        formData.append('q1', userAnswers[0]);
-        formData.append('q2', userAnswers[1]);
-        formData.append('q3', userAnswers[2]);
-        formData.append('q4', userAnswers[3]);
-        formData.append('q5', userAnswers[4]);
-        formData.append('q6', userAnswers[5]);
-        formData.append('q7', userAnswers[6]);
-        formData.append('q8', userAnswers[7]);
-        formData.append('q9', userAnswers[8]);
-        formData.append('q10', userAnswers[9]);
+        
+        // Создаем невидимый iframe (чтобы страница не перезагружалась)
+        const iframe = document.createElement('iframe');
+        iframe.name = 'hidden_iframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
 
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            // Убираем headers или меняем Content-Type на text/plain, чтобы избежать ошибки 405
-            headers: { 
-                'Content-Type': 'text/plain' 
-            },
-            body: formData.toString()
-        }).then(() => {
-            document.getElementById('saving-status').innerText = "✅ Результаты успешно сохранены в таблицу!";
-            document.getElementById('saving-status').style.color = "green";
-        }).catch(error => {
-            document.getElementById('saving-status').innerText = "❌ Ошибка при сохранении.";
-            document.getElementById('saving-status').style.color = "red";
-            console.error('Error:', error);
-        });
+        // Создаем скрытую форму для отправки данных в Google Script
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = SCRIPT_URL;
+        form.target = 'hidden_iframe'; 
+
+        // Функция добавления полей
+        const appendData = (name, value) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+        };
+
+        // Заполняем данные (отправляем ТЕКСТЫ ответов)
+        appendData('score', score);
+        appendData('total', questions.length);
+        appendData('q1', userAnswersText[0] || '');
+        appendData('q2', userAnswersText[1] || '');
+        appendData('q3', userAnswersText[2] || '');
+        appendData('q4', userAnswersText[3] || '');
+        appendData('q5', userAnswersText[4] || '');
+        appendData('q6', userAnswersText[5] || '');
+        appendData('q7', userAnswersText[6] || '');
+        appendData('q8', userAnswersText[7] || '');
+        appendData('q9', userAnswersText[8] || '');
+        appendData('q10', userAnswersText[9] || '');
+
+        document.body.appendChild(form);
+        
+        // Отправляем форму
+        form.submit();
+
+        // Показываем сообщение об успехе
+        document.getElementById('saving-status').innerText = "✅ Результаты отправлены в таблицу!";
+        document.getElementById('saving-status').style.color = "green";
+
     } else {
         document.getElementById('saving-status').innerText = "⚠️ Вы не указали ссылку на Google Script.";
+        document.getElementById('saving-status').style.color = "red";
     }
 }
