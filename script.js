@@ -1,5 +1,5 @@
 // ВСТАВЬТЕ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT (заканчивается на /exec)
-const SCRIPT_URL = "AKfycbzR-Y1yXIENYjiOyE_3w6ScEZrDTNQdGXFLRKHxMKIClP_iTrhYK1YfVq_644pBDq-CDw";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzR-Y1yXIENYjiOyE_3w6ScEZrDTNQdGXFLRKHxMKIClP_iTrhYK1YfVq_644pBDq-CDw/exec";
 
 // 10 вопросов на основе нашего урока
 const questions = [
