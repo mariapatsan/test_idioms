@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Idioms Test</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>English Idioms Test</h1>
+        
+        <div id="start-screen">
+            <p>Проверьте свои знания популярных английских фразеологизмов!</p>
+            <button onclick="startTest()">Начать тест</button>
+        </div>
+
+        <div id="quiz-screen" style="display: none;">
+            <h2 id="question-text">Вопрос</h2>
+            <div id="options-container"></div>
+            <button id="next-btn" onclick="nextQuestion()" style="display: none;">Далее</button>
+        </div>
+
+        <div id="result-screen" style="display: none;">
+            <h2>Тест завершен!</h2>
+            <p id="result-text"></p>
+            <p id="saving-status">Сохранение результатов...</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
